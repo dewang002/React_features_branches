@@ -1,21 +1,21 @@
-import React, { useEffect } from 'react'
+import React, {  useRef, useState } from 'react'
 
 const App = () => {
-
-  
-  const fetchData = async() => {
-      const res = await fetch(`https://dummyjson.com/users/5/posts`)
-      const data = await res.json()
-      console.log(data)
-      return data
+  const [,setNumber] = useState({})
+  const number = useRef(0)
+  const handleClick = () =>{
+    number.current-=1;
+    setNumber({})
   }
-  
-  useEffect(()=>{ 
-    fetchData()
-  })
+  const handleAdd = () =>{
+    number.current+=1;
+    setNumber({})
+  }
   return (
-    <div>
-
+    <div className='h-screen gap-4 flex items-center justify-center'>
+    <span onClick={handleClick} className=' decrease text-xl'>-</span>
+    <h1 className='number'>{number.current}</h1>
+    <span onClick={handleAdd} className=' increase text-xl'>+</span>
     </div>
   )
 }
