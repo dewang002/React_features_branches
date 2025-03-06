@@ -1,60 +1,66 @@
-import React, { useState } from 'react'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 const App = () => {
-  const [formData, setFormData] = useState({
-    name:'',
-    email:'',
-    password:''
-  })
-  const [formError, setFormError] = useState<Record<string,string>>({})
-  const handleChange = ( e: React.ChangeEvent<HTMLInputElement>) :void =>{
-    const {name, value} = e.target;
-    setFormData({
-      ...formData,
-      [name]:value
-    })
-  }
+  const [upperCase,SetUpperCase] = useState(false)  
+  const [lowerCase,SetLowerCase] = useState(false)  
+  const [number,SetNumber] = useState(false)
+  const [passLength,setPassLength] = useState(12)  
+  const [random,setRandom] = useState('')
 
-  const validateForm = ():boolean => {
-    let isValid = true;
-    const error: Record<string,string> = {};
-
-    if(!formData.name || !formData.name.trim()){
-      error.name = "name is not valid"
-      isValid = false
+  const handleClick = () => {
+    let validChar = ''
+    const upperChar = 'ABCDEFGHIJKLMNOPQRSTVWXYZ'
+    const lowerChar = 'abcdefghijklmnopqrstvwxyz'
+    const numberChar = '0123456789'
+    if(upperCase){
+      validChar+=upperChar
     }
-    const emailRejex = /[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}/ ;
-    if(!formData.email || !emailRejex.test(formData.email)){
-        error.email = "not a valid email"
-        isValid = false 
+    if(lowerCase){
+      validChar+=lowerChar
     }
-
-    if(!formData.password || formData.password.length<6){
-      isValid = false
-      error.password = "enter valid password"
+    if(number){
+      validChar+=numberChar
     }
-
-    setFormError(error)
-    return isValid
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-   if(validateForm()){
-    console.log(formData)
-   }
+    
+   f
+    let generatedChar = ''
+    for(let i=0;i<passLength;i++){
+      const randomIndex = Math.floor(Math.random()*validChar.length)
+      generatedChar += validChar[randomIndex]
+    }
+    setRandom(generatedChar)
   }
 
   return (
-    <form className='flex flex-col' onSubmit={handleSubmit}>
-      <input className='border' name={"name"} onChange={handleChange} type="text" />
-      {formError.name && <p className="text-red-500">{formError.name}</p>}
-      <input className='border' name={"email"} onChange={handleChange} type="email" />
-      {formError.email && <p className="text-red-500">{formError.email}</p>}
-      <input className='border' name={"password"} onChange={handleChange} type="password" />
-      {formError.password && <p className="text-red-500">{formError.password}</p>}
-      <button type='submit'>submit</button>
-    </form>
+    <div className='w-full h-screen bg-amber-200 p-10'>
+      generate Password
+      <div className='h-10  w-xl bg-white rounded text-lg'>
+        {random && random}
+      </div>
+      <div className='flex flex-col items-start'>
+
+        <label htmlFor="">
+          password Length
+          <input onChange={(e)=>setPassLength(parseInt(e.target.value))} className='bg-white border' type="number" />
+        </label>
+      <label>
+      upperCase
+      <input onChange={()=>SetUpperCase(!upperCase)} className='' checked={upperCase} type="checkbox" />
+      </label>
+
+      <label>
+      lowerCase
+      <input onChange={()=>SetLowerCase(!lowerCase)} className='' checked={lowerCase} type="checkbox" />
+      </label>
+
+      <label>
+      number
+      <input onChange={()=>SetNumber(!number)} className='' checked={number} type="checkbox" />
+      </label>
+      <button onClick={handleClick} type='submit' className='bg-blue-500 rounded'>submit</button>
+      </div>
+    </div>
   )
 }
 
