@@ -1,66 +1,24 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useState } from "react"
+
+
 
 const App = () => {
-  const [upperCase,SetUpperCase] = useState(false)  
-  const [lowerCase,SetLowerCase] = useState(false)  
-  const [number,SetNumber] = useState(false)
-  const [passLength,setPassLength] = useState(12)  
-  const [random,setRandom] = useState('')
-
-  const handleClick = () => {
-    let validChar = ''
-    const upperChar = 'ABCDEFGHIJKLMNOPQRSTVWXYZ'
-    const lowerChar = 'abcdefghijklmnopqrstvwxyz'
-    const numberChar = '0123456789'
-    if(upperCase){
-      validChar+=upperChar
-    }
-    if(lowerCase){
-      validChar+=lowerChar
-    }
-    if(number){
-      validChar+=numberChar
-    }
-    
-   f
-    let generatedChar = ''
-    for(let i=0;i<passLength;i++){
-      const randomIndex = Math.floor(Math.random()*validChar.length)
-      generatedChar += validChar[randomIndex]
-    }
-    setRandom(generatedChar)
-  }
-
+  const [dark, setDark] = useState(false)
   return (
-    <div className='w-full h-screen bg-amber-200 p-10'>
-      generate Password
-      <div className='h-10  w-xl bg-white rounded text-lg'>
-        {random && random}
-      </div>
-      <div className='flex flex-col items-start'>
-
-        <label htmlFor="">
-          password Length
-          <input onChange={(e)=>setPassLength(parseInt(e.target.value))} className='bg-white border' type="number" />
-        </label>
-      <label>
-      upperCase
-      <input onChange={()=>SetUpperCase(!upperCase)} className='' checked={upperCase} type="checkbox" />
-      </label>
-
-      <label>
-      lowerCase
-      <input onChange={()=>SetLowerCase(!lowerCase)} className='' checked={lowerCase} type="checkbox" />
-      </label>
-
-      <label>
-      number
-      <input onChange={()=>SetNumber(!number)} className='' checked={number} type="checkbox" />
-      </label>
-      <button onClick={handleClick} type='submit' className='bg-blue-500 rounded'>submit</button>
-      </div>
-    </div>
+    <div className={dark&&'dark'}>
+    <div  className="bg-white  h-screen w-full dark:bg-black  px-6 py-8 ring shadow-xl ring-gray-900/5">
+  <div>
+    <span onClick={() => setDark(prev=>!prev)}  className="inline-flex items-center justify-center rounded-md bg-indigo-500 p-2 shadow-lg">
+      <svg  className="h-6 w-6 stroke-white">
+        </svg>
+        </span>
+  </div>
+  <h3  className="text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight ">Writes upside-down</h3>
+  <p  className="text-gray-500 dark:text-gray-400 mt-2 text-sm ">
+    The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+  </p>
+</div>
+        </div>
   )
 }
 
