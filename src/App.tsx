@@ -1,42 +1,62 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { addTodo, deleteTodo, editTodo, toggleTodo } from "./store/todoSlice"
 
 const App = () => {
-  const [city, setCity] = useState('')
-  const [weather, setWeather] = useState(null)
-  const token = '57aa9d73be95fef5e3340aa03d77c6e4'
-
-  const fetchData = async () => {
-    try{
-      const res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${token}&units=metric`)
-      const data = await res.data;
-      setWeather(data)
-    }catch(err){
-      console.log(err+" something went wrong")
-    }
+  const [value, setValue] = useState('')
+  const [description, setDescription] = useState('')
+  const dispatch = useDispatch()
+  const todo = useSelector(state => state.todo.data)
+  
+  const handlClick = () => {
+    let id = Math.floor(Math.random() * 5000)
+    dispatch(addTodo({ id, value, description, done:false }))
+    setValue('')
+    setDescription('')
   }
 
-  useEffect(()=>{
-    const timer = setTimeout(()=>{
-      if(city){
-        fetchData()
-      }
-    },300)
-    if(!city)setWeather(null)
-      return ()=>clearTimeout(timer)
-  },[city])
+  const handleToggle = (id) => {
+    dispatch(toggleTodo(id))
+    console.log('clicked')
+  }
+
+  const handleDelete = (id) => {
+    dispatch(deleteTodo(id))
+  }
+
+  const handleEdit = (id) => {
+    dispatch(editTodo(id))
+  }
+
   return (
-    <div className="w-full h-screen ">
-      <div className="flex felx-col justify-center">
-      <input placeholder="type your place name ..." className="border w-sm p-2 rounded" type="text" name="" value={city} onChange={(e)=>setCity(e.target.value)} />
+    <div>
+      <div>
+        <Input onChange={(e) => setValue(e.target.value)} value={value} />
+        <Input onChange={(e) => setDescription(e.target.value)} value={description} />
+        <Button className="p-2 bg-sky-400 text-white rounded" onClick={handlClick} >submit</Button>
       </div>
-     <div className="flex flex-col items-center">
-      <h1>{weather?.name}</h1>
-      <h1>{weather?.weather[0].description}</h1>
-      <h1>{weather?.main.temp}</h1>
-     </div>
+      <div className="h-100 w-xl bg-sky-900 overflow-y-scroll rounded">
+        {
+          todo?.map(elem => {
+            return <div key={elem} className="min-h-20 w-full my-4 bg-sky-300">
+              <h1 className={`${elem.done && 'line-through'}`}>{elem.value}</h1>
+              <h1 className={`${elem.done && 'line-through'}`}>{elem.description}</h1>
+              <Button onClick={()=>handleToggle(elem.id)} className={`p-2 ${elem.done ? 'bg-green-700' : 'bg-red-700'} text-white mr-4`} >done</Button>
+              <Button onClick={()=>handleEdit(elem.id)} className={`p-2 text-white mr-4`} >edit</Button>
+              <Button onClick={()=>handleDelete(elem.id)} className={`p-2 bg-red-700 text-white`} >delete</Button>
+            </div>
+          })
+        }
+      </div>
     </div>
   )
+}
+
+const Input = ({ onChange, value }) => {
+  return <input onChange={onChange} value={value} placeholder="add task . . . " className="border w-sm" type="text" />
+}
+const Button = ({ onClick, children, className }) => {
+  return <button className={className} onClick={onClick}>{children}</button>
 }
 
 export default App
