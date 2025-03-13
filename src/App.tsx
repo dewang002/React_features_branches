@@ -1,19 +1,28 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addTodo, deleteTodo, editTodo, toggleTodo } from "./store/todoSlice"
 
 const App = () => {
   const [value, setValue] = useState('')
   const [description, setDescription] = useState('')
+  const [toggleSubmit, setToggleSubmit] = useState(false)
+  const [edit, setEdit] = useState(null)
+
   const dispatch = useDispatch()
   const todo = useSelector(state => state.todo.data)
   
   const handlClick = () => {
-    let id = Math.floor(Math.random() * 5000)
-    dispatch(addTodo({ id, value, description, done:false }))
-    setValue('')
-    setDescription('')
-  }
+    if(toggleSubmit){
+      dispatch(editTodo({id:edit, value, description}))
+      setToggleSubmit(false)
+    }else{
+        let id = Math.floor(Math.random() * 5000)
+        dispatch(addTodo({id, value, description, done:false}))
+      }
+      setValue('')
+      setDescription('')
+      setEdit(null)
+    } 
 
   const handleToggle = (id) => {
     dispatch(toggleTodo(id))
@@ -24,8 +33,11 @@ const App = () => {
     dispatch(deleteTodo(id))
   }
 
-  const handleEdit = (id) => {
-    dispatch(editTodo(id))
+  const handleEdit = (id, value, description) => {
+    setToggleSubmit(true)
+    setDescription(description)
+    setValue(value)
+    setEdit(id)
   }
 
   return (
@@ -42,7 +54,7 @@ const App = () => {
               <h1 className={`${elem.done && 'line-through'}`}>{elem.value}</h1>
               <h1 className={`${elem.done && 'line-through'}`}>{elem.description}</h1>
               <Button onClick={()=>handleToggle(elem.id)} className={`p-2 ${elem.done ? 'bg-green-700' : 'bg-red-700'} text-white mr-4`} >done</Button>
-              <Button onClick={()=>handleEdit(elem.id)} className={`p-2 text-white mr-4`} >edit</Button>
+              <Button onClick={()=>handleEdit(elem.id, elem.value, elem.description)} className={`p-2 text-white mr-4`} >edit</Button>
               <Button onClick={()=>handleDelete(elem.id)} className={`p-2 bg-red-700 text-white`} >delete</Button>
             </div>
           })

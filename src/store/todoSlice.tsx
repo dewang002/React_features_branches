@@ -7,7 +7,7 @@ const todoSlice = createSlice({
     },
     reducers:{
         addTodo: (state, action) => {
-            state.data.push(action.payload)
+                state.data.push(action.payload)
         },
         toggleTodo: (state, action) => {
             let todo = state.data.find(item => item.id === action.payload)
@@ -16,11 +16,14 @@ const todoSlice = createSlice({
             }
         },
         editTodo: (state, action) => {
-            const {id, editValue, editDescription} = action.payload
-            if(id){
-                const todo = state.data.find(item => item.id==id)
-                todo.value = editValue;
-                todo.description = editDescription;
+            const {id, value, description} = action.payload
+            const todoIndex = state.data.findIndex(item => item.id === id)
+            if(todoIndex !== -1){
+                state.data[todoIndex] = {
+                    ...state.data[todoIndex],
+                    value,
+                    description
+                }
             }
         },
         deleteTodo: (state, action) => {
